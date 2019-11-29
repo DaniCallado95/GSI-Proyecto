@@ -30,7 +30,7 @@ class Usuario(models.Model):
 
 class Empresa(models.Model):
     
-    id_empresa = models.CharField(max_length=50,primary_key=True)
+    id_empresa = models.AutoField(max_length=50,primary_key=True)
     nombre = models.CharField(max_length=50)
     email = models.CharField(max_length=50)
 

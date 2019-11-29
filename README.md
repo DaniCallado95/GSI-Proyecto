@@ -5,4 +5,4 @@ Integrantes:
   Daniel Callado\
   Luis Enrique Pina\
 
-  https://wsvincent.com/django-custom-user-model-tutorial/ "Crear usuarios personalizados de django"\
+  https://developer.mozilla.org/es/docs/Learn/Server-side/Django/Models "Tutorial Django"\

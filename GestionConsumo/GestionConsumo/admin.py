@@ -1,8 +1,5 @@
 from django.contrib import admin
-from .models import Empresa
-from .models import Usuario
-from .models import Activo
-from .models import Consumo
+from .models import Empresa, Usuario, Activo, Consumo
 
 admin.site.register(Empresa)
 admin.site.register(Usuario)
