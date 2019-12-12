@@ -24,10 +24,16 @@ def index(request):
 def listar_empresas(request):
     num_empresas = Empresa.objects.count()
     listadoEmpresas = Empresa.objects.all()
+
+    empresa = 0
+    if request.user.is_authenticated:
+        empresa_pk = Usuario.objects.get(user=request.user.id)
+        empresa = empresa_pk.id_empresa.pk
+
     return render(
         request, 
         'listaEmpresas.html', 
-        {'num_empresas': num_empresas,'empresas': listadoEmpresas}
+        {'num_empresas': num_empresas,'empresas': listadoEmpresas, 'empresa': empresa}
     )
 
 def empresa_new(request):
