@@ -7,10 +7,10 @@
         <h2 class="display-4">Añadir nueva empresa</h2>
         <form method="POST" class="empresa-form" id="formulario_id" action="./verifyRegister">{% csrf_token %}
             <div class="form-group">
-                {{ form.as_p }}
+                {{ form_empresa.as_p }}
             </div>
             <div class="form-group">
-                {{ form2.as_p }}
+                {{ form_user.as_p }}
                 <p><label for="id_contrasena2">Confirmación de contraseña:</label> <input type="password"
                         name="contrasena2" class="form-control"
                         placeholder="Confirme aqui la contraseña del administrador" required id="id_contrasena2"></p>

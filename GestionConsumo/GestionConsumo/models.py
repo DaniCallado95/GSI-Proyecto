@@ -12,17 +12,10 @@ def max_value_current_year(value):
 
 class Usuario(models.Model):
 
-    roles = (
-            ('ADMIN', 'admin'),
-            ('AÑADIR', 'añadir'),
-            ('EDITAR', 'editar')
-    )
-
     # Vincula los empleados con un usuario de la bd
     user = models.OneToOneField(User, on_delete=models.CASCADE)
 
     id_empresa = models.ForeignKey("Empresa", on_delete=models.CASCADE)
-    rol = models.CharField(max_length=10, choices=roles, default='AÑADIR')
 
     def __str__(self): 
         return self.id_empresa.__str__() + " (" + self.user.__str__() + ")"
