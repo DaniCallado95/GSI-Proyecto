@@ -1,0 +1,18 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+<div class="jumbotron jumbotron-fuid">
+  <div class="container">
+    <h1 class="display-4">Listado de empresas</h1>
+    <p class="lead">En esta página podras ver todas las empresas.</p>
+  </div>
+</div>
+
+  <h1><strong>Total:</strong> {{ num_empresas }}</h1>
+{% for empresa in empresas %}
+      <div>
+        <h2><a href="">{{ empresa.nombre }}</a></h2>
+      </div>
+{% endfor %}
+
+{% endblock %}

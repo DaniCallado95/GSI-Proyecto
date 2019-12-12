@@ -21,6 +21,15 @@ def index(request):
         {'num_empresas': num_empresas, 'empresa': empresa}
     )
 
+def listar_empresas(request):
+    num_empresas = Empresa.objects.count()
+    listadoEmpresas = Empresa.objects.all()
+    return render(
+        request, 
+        'listaEmpresas.html', 
+        {'num_empresas': num_empresas,'empresas': listadoEmpresas}
+    )
+
 def empresa_new(request):
     form_empresa = EmpresaForm()
     form_user = AdminEmpresaForm()

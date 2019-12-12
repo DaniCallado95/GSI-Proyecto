@@ -24,7 +24,7 @@
       <ul class="sidebar-nav list-group">
         
         <li class="list-group-item"><a href="{% url 'index' %}">Home</a></li>
-        <li class="list-group-item"><a href="">Empresas</a></li>
+        <li class="list-group-item"><a href="{% url 'lista_empresas' %}">Empresas</a></li>
         {% if user.is_authenticated %}
           <li class="list-group-item">User: {{ user.get_username }}</li>
           <li class="list-group-item"><a href="{% url 'empresa_perfil' pk=empresa %}?next={{request.path}}">Perfil</a></li>
