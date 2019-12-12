@@ -25,7 +25,7 @@ class Usuario(models.Model):
     rol = models.CharField(max_length=10, choices=roles, default='AÑADIR')
 
     def __str__(self): 
-        return self.id_empresa
+        return self.id_empresa.__str__() + " (" + self.user.__str__() + ")"
 
 class Empresa(models.Model):
     

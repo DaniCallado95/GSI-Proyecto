@@ -1,9 +1,15 @@
-default: montar
+default: run
 
 run:
 	python manage.py runserver
 
-montar:
-	python -m venv myvenv
-	source myvenv/bin/activate
-	pip install django
+reload_tables:
+	python manage.py makemigrations
+	python manage.py migrate
+
+delete_data:
+	python manage.py flush
+
+# Previamente hay que montar el entorno virtual
+montar_django:
+	pip install django==2.2.7
