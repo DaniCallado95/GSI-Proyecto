@@ -9,10 +9,16 @@ from django.http import Http404
 
 def index(request):
     num_empresas = Empresa.objects.count()
+
+    empresa = 0
+    if request.user.is_authenticated:
+        empresa_pk = Usuario.objects.get(user=request.user.id)
+        empresa = empresa_pk.id_empresa.pk
+
     return render(
         request, 
         'index.html', 
-        {'num_empresas': num_empresas}
+        {'num_empresas': num_empresas, 'empresa': empresa}
     )
 
 def empresa_new(request):
