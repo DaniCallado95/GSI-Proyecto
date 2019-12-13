@@ -11,7 +11,7 @@
   <h1><strong>Total:</strong> {{ num_empresas }}</h1>
 {% for empresa in empresas %}
       <div>
-        <h2><a href="">{{ empresa.nombre }}</a></h2>
+        <h2><a href="{% url 'empresa_perfil' pk=empresa.pk %}?next={{request.path}}">{{ empresa.nombre }}</a></h2>
       </div>
 {% endfor %}
 

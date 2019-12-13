@@ -18,10 +18,10 @@ def index(request):
     return render(
         request, 
         'index.html', 
-        {'num_empresas': num_empresas, 'empresa': empresa}
+        {'num_empresas': num_empresas, 'empresa_pk': empresa}
     )
 
-def listar_empresas(request):
+def empresa_listar(request):
     num_empresas = Empresa.objects.count()
     listadoEmpresas = Empresa.objects.all()
 
@@ -32,8 +32,8 @@ def listar_empresas(request):
 
     return render(
         request, 
-        'listaEmpresas.html', 
-        {'num_empresas': num_empresas,'empresas': listadoEmpresas, 'empresa': empresa}
+        'empresa_listar.html', 
+        {'num_empresas': num_empresas,'empresas': listadoEmpresas, 'empresa_pk': empresa}
     )
 
 def empresa_new(request):
@@ -73,4 +73,10 @@ def verifyRegister(request):
 
 def empresa_perfil(request, pk):
     empresa = get_object_or_404(Empresa, pk=pk)
-    return render(request, 'empresa_perfil.html', {'empresa': empresa})
+
+    empresa_pk = 0
+    if request.user.is_authenticated:
+        empresa_info = Usuario.objects.get(user=request.user.id)
+        empresa_pk = empresa_info.id_empresa.pk
+
+    return render(request, 'empresa_perfil.html', {'empresa': empresa, 'empresa_pk': empresa_pk})

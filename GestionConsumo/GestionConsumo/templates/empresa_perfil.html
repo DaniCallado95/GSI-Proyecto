@@ -1,0 +1,21 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+<div class="jumbotron jumbotron-fuid">
+  <div class="container">
+    <h1 class="display-4">{{ empresa.nombre }}</h1>
+    <p class="lead">En esta página podras gestionar la información de tu empresa.</p>
+  </div>
+</div>
+
+    {% if user.is_authenticated %}
+        <p>Esto aparece para usuarios logeados</p>
+        <p>Menu de Usuario(Hay que comprobar si es de la empresa)</p>
+        <p>Desplegar opciones dependiendo del grupo al que perteneze: Admin o Editor</p>
+        <p>---------------------------------------------------------------------------</p>
+    {% endif%}
+
+    <p>Esto aparece para todos</p>
+    <p>Muestra de graficas (publicas para todos??)</p>
+
+{% endblock %}
