@@ -76,7 +76,12 @@ def empresa_perfil(request, pk):
 
     empresa_pk = 0
     if request.user.is_authenticated:
-        empresa_info = Usuario.objects.get(user=request.user.id)
-        empresa_pk = empresa_info.id_empresa.pk
+        usuario = Usuario.objects.get(user=request.user.id)
+        empresa_pk = usuario.id_empresa.pk
+        if int(pk)==int(empresa_pk):
+            if request.user.groups.filter(name='administrador'):
+                return render(request, 'empresa_perfil.html', {'empresa': empresa, 'empresa_pk': empresa_pk})
+            else:
+                return render(request, 'empresa_perfil.html', {'empresa': empresa, 'empresa_pk': empresa_pk})
 
     return render(request, 'empresa_perfil.html', {'empresa': empresa, 'empresa_pk': empresa_pk})

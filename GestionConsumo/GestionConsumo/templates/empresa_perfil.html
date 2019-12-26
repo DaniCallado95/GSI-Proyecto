@@ -1,5 +1,8 @@
 {% extends "base_generic.html" %}
 
+<!-- FUNCIONES NUESTRAS en TEMPLATETAGS-->
+{% load auth_extras %}
+
 {% block content %}
 <div class="jumbotron jumbotron-fuid">
   <div class="container">
@@ -8,14 +11,29 @@
   </div>
 </div>
 
-    {% if user.is_authenticated %}
-        <p>Esto aparece para usuarios logeados</p>
-        <p>Menu de Usuario(Hay que comprobar si es de la empresa)</p>
-        <p>Desplegar opciones dependiendo del grupo al que perteneze: Admin o Editor</p>
-        <p>---------------------------------------------------------------------------</p>
-    {% endif%}
+  <table>
+    <tr>
+  {% if user.is_authenticated %}
+    {% if user|empresa:empresa.pk %}
+      {% if user|has_group:"administrador" %}
+          <th>Visualizacion</th>
+          <th>Activos</th>
+          <th>Consumos</th>
+          <th>Usuarios</th>
+        </tr>
+        <tr>
+      {% else %}
+          <th>Visualizacion</th>
+          <th>Activos</th>
+          <th>Consumos</th>
+        </tr>
+        <tr>   
+      {% endif %}
+    {% endif %}
+  {% endif %}
 
-    <p>Esto aparece para todos</p>
-    <p>Muestra de graficas (publicas para todos??)</p>
+      <td colspan="100%">{% block contenido %}{% endblock %}</td>
+    </tr>
+  </table>
 
 {% endblock %}
