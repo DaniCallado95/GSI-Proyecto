@@ -11,29 +11,23 @@
   </div>
 </div>
 
-  <table>
-    <tr>
-  {% if user.is_authenticated %}
-    {% if user|empresa:empresa.pk %}
-      {% if user|has_group:"administrador" %}
-          <th>Visualizacion</th>
-          <th>Activos</th>
-          <th>Consumos</th>
-          <th>Usuarios</th>
-        </tr>
-        <tr>
-      {% else %}
-          <th>Visualizacion</th>
-          <th>Activos</th>
-          <th>Consumos</th>
-        </tr>
-        <tr>   
-      {% endif %}
-    {% endif %}
-  {% endif %}
-
-      <td colspan="100%">{% block contenido %}{% endblock %}</td>
-    </tr>
-  </table>
+{% if user.is_authenticated %}
+{% if user|empresa:empresa.pk %}
+{% if user|has_group:"administrador" %}
+<ul class="nav nav-pills nav-stacked">
+  <li><a href="#">Visualización</a></li>
+  <li><a href="#">Activos</a></li>
+  <li><a href="#">Consumos</a></li>
+  <li><a href="./usuarios">Usuarios</a></li>
+</ul>
+{% else %}
+<ul class="nav nav-pills nav-stacked">
+  <li><a href="#">Visualización</a></li>
+  <li><a href="#">Activos</a></li>
+  <li><a href="./usuarios">Consumos</a></li>
+</ul>
+{% endif %}
+{% endif %}
+{% endif %}
 
 {% endblock %}

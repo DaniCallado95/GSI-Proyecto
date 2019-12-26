@@ -5,6 +5,7 @@ from .forms import EmpresaForm, AdminEmpresaForm
 from django.contrib.auth import login
 from django.contrib.auth.models import Group
 from django.http import Http404
+from django.views.decorators.csrf import csrf_protect
 # Create your views here.
 
 def index(request):
@@ -85,3 +86,54 @@ def empresa_perfil(request, pk):
                 return render(request, 'empresa_perfil.html', {'empresa': empresa, 'empresa_pk': empresa_pk})
 
     return render(request, 'empresa_perfil.html', {'empresa': empresa, 'empresa_pk': empresa_pk})
+
+def empresa_usuarios(request, pk):
+    empresa = get_object_or_404(Empresa, pk=pk)
+    empresa_pk = 0
+    if request.user.is_authenticated:
+        usuario = Usuario.objects.get(user=request.user.id)
+        empresa_pk = usuario.id_empresa.pk
+        usuarios = []
+        usuarios = Usuario.objects.filter(id_empresa=empresa_pk)
+        if int(pk)==int(empresa_pk):
+            return render(request, 'empresa_usuarios.html', {'empresa': empresa, 'empresa_pk': empresa_pk, 'titulo': 'Usuarios', 'usuarios':usuarios})
+
+@csrf_protect
+def empresa_add_user(request, pk):
+    if request.method == 'POST':
+        usuario = request.POST.get('username')
+        contrasena = request.POST.get('pass')
+        empresa = request.POST.get('empresa_pk')
+        # Create user and save to the database
+        user = User.objects.create_user(usuario, '', contrasena)
+        user.save()
+
+        # Assign user to auth group
+        group = Group.objects.get(name='editor')
+        group.user_set.add(user) 
+
+        empresa = Empresa.objects.get(id_empresa=pk)
+
+        usuarioApp = Usuario(user=user, id_empresa=empresa)
+        usuarioApp.save()
+
+        # Si el usuario se crea correctamente 
+        if user is not None:
+            # Hacemos el login manualmente
+            login(request, user)
+            # Y le redireccionamos a la portada
+            return redirect('empresa_usuarios', pk=pk)
+
+@csrf_protect
+def empresa_delete_user(request, pk):
+    if request.method == 'POST':
+        usuario = request.POST.get('username')
+        empresa = request.POST.get('empresa_pk')
+
+        user = User.objects.get(username = usuario)
+
+        usuario_empresa = Usuario.objects.get(user=user.id, id_empresa = pk)
+
+        usuario_empresa.delete()
+        user.delete()
+        return redirect('empresa_usuarios', pk=pk)

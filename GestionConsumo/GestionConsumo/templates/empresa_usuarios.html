@@ -1,0 +1,69 @@
+{% extends "base_generic.html" %}
+
+<!-- FUNCIONES NUESTRAS en TEMPLATETAGS-->
+{% load auth_extras %}
+
+{% block content %}
+<div class="jumbotron jumbotron-fuid">
+  <div class="container">
+    <h1 class="display-4">{{ empresa.nombre }}</h1>
+    <h2 class="lead">{{ titulo }}.</h2>
+  </div>
+</div>
+
+{% if user.is_authenticated %}
+{% if user|empresa:empresa.pk %}
+
+{% for u in usuarios %}
+<div class="row text-center">
+  <div class="col-md-4 form-group">
+    <h3> {{ u.user }} </h3>
+  </div>
+  <div class="col-md-4"></div>
+  <div class="col-md-4 form-group">
+    <form action="./deleteUser" method="post" class="forms_delete_user">{% csrf_token %}
+      <input type="hidden" name="username" value="{{ u.user }}">
+      <input type="hidden" name="id_empresa" value="{{ empresa_pk }}">
+      <input type="submit" value="Eliminar" class="btn btn-danger btn-block">
+    </form>
+  </div>
+</div>
+<hr class="h-100">
+{% endfor %}
+<div class="row text-center">
+  <form action="./addUser" method="post" id="form_add_user">{% csrf_token %}
+    <div class="col-md-4 form-group">
+      <input type="text" name="username" class="form-control" placeholder="Introduce aqui el usuario" required>
+      <input type="password" name="pass" class="form-control" id="id_contrasena" placeholder="Introduce aqui la contraseña" required>
+      <input type="password" name="pass2" class="form-control" id="id_contrasena2" placeholder="Repite aqui la contraseña" required>
+    </div>
+    <div class="col-md-4"></div>
+    <div class="col-md-4 form-group">
+      <input type="hidden" name="id_empresa" value="{{ empresa_pk }}">
+      <input type="submit" value="Añadir" class="btn btn-success btn-block">
+    </div>
+  </form>
+</div>
+
+{% endif %}
+{% endif %}
+<script>
+  $("#form_add_user").submit(function(e){
+        console.log($("#id_contrasena").val() + " | " + $("#id_contrasena2").val());
+        var str1 = $("#id_contrasena").val();
+        var str2 = $("#id_contrasena2").val();
+        if(str1.localeCompare(str2)){
+            e.preventDefault();
+            alert("Las contraseñas no coinciden");
+        }
+    });
+    $(".forms_delete_user").submit(function(e){
+
+      var respuesta = confirm("¿Seguro que desa borrar este usuario?");
+
+      if (!respuesta){
+        e.preventDefault();
+      }
+    });
+</script>
+{% endblock %}
