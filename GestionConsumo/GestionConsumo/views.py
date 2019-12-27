@@ -79,11 +79,6 @@ def empresa_perfil(request, pk):
     if request.user.is_authenticated:
         usuario = Usuario.objects.get(user=request.user.id)
         empresa_pk = usuario.id_empresa.pk
-        if int(pk)==int(empresa_pk):
-            if request.user.groups.filter(name='administrador'):
-                return render(request, 'empresa_perfil.html', {'empresa': empresa, 'empresa_pk': empresa_pk})
-            else:
-                return render(request, 'empresa_perfil.html', {'empresa': empresa, 'empresa_pk': empresa_pk})
 
     return render(request, 'empresa_perfil.html', {'empresa': empresa, 'empresa_pk': empresa_pk})
 
@@ -94,9 +89,13 @@ def empresa_usuarios(request, pk):
         usuario = Usuario.objects.get(user=request.user.id)
         empresa_pk = usuario.id_empresa.pk
         usuarios = []
-        usuarios = Usuario.objects.filter(id_empresa=empresa_pk)
+        usuarios = Usuario.objects.filter(id_empresa=empresa_pk).exclude(user = request.user)
         if int(pk)==int(empresa_pk):
             return render(request, 'empresa_usuarios.html', {'empresa': empresa, 'empresa_pk': empresa_pk, 'titulo': 'Usuarios', 'usuarios':usuarios})
+        else:
+            num_empresas = Empresa.objects.count()
+            return render(request, 'index.html', {'num_empresas': num_empresas, 'empresa_pk': empresa_pk})
+
 
 @csrf_protect
 def empresa_add_user(request, pk):
@@ -119,8 +118,6 @@ def empresa_add_user(request, pk):
 
         # Si el usuario se crea correctamente 
         if user is not None:
-            # Hacemos el login manualmente
-            login(request, user)
             # Y le redireccionamos a la portada
             return redirect('empresa_usuarios', pk=pk)
 

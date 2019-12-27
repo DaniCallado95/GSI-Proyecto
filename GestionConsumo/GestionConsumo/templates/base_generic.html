@@ -29,9 +29,9 @@
         {% if user.is_authenticated %}
           <li class="list-group-item">User: {{ user.get_username }}</li>
           <li class="list-group-item"><a href="{% url 'empresa_perfil' pk=empresa_pk %}?next={{request.path}}">Perfil</a></li>
-          <li class="list-group-item"><a href="{% url 'logout'%}?next={{request.path}}">Logout</a></li>   
+          <li class="list-group-item"><a href="{% url 'logout'%}?next=/GestionConsumo">Logout</a></li>   
         {% else %}
-          <li class="list-group-item"><a href="{% url 'login'%}?next={{request.path}}">Login</a></li>
+          <li class="list-group-item"><a href="{% url 'login'%}?next=/GestionConsumo">Login</a></li>
           <li class="list-group-item"><a href="{% url 'empresa_new'%}?next={{request.path}}">Registrarse</a></li>   
         {% endif %} 
       </ul>
