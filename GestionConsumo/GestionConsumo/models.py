@@ -49,15 +49,16 @@ class Consumo(models.Model):
             ('AGUA', 'agua'),
             ('GASOLINA', 'gasolina'),
             ('DIESEL', 'diesel'),
-            ('GAS', 'gas')          
+            ('GAS', 'gas'),       
     )
 
-    id_empresa = models.ForeignKey("Activo", related_name="empresa", on_delete=models.CASCADE)
-    id_activo = models.ForeignKey("Activo", related_name="activo", on_delete=models.CASCADE)
-    año = models.PositiveIntegerField(default=current_year(), validators=[MinValueValidator(1984), max_value_current_year], primary_key=True)
+    id_consumo = models.AutoField(primary_key=True)
+    id_empresa = models.ForeignKey("Activo", related_name="empresa", db_column='id_empresa', on_delete=models.CASCADE)
+    id_activo = models.ForeignKey("Activo", related_name="activo", db_column='id_activo', on_delete=models.CASCADE)
+    año = models.PositiveIntegerField(default=current_year(), validators=[MinValueValidator(1984), max_value_current_year])
     tipo = models.CharField(max_length=15, choices=tipos, default='ELECTRICIDAD')
-    consumo = models.DecimalField(max_digits=5, decimal_places=2, default=0)
-    co2_emitido = models.DecimalField(max_digits=5, decimal_places=2, default=0)
+    consumo = models.DecimalField(max_digits=8, decimal_places=2, default=0)
+    co2_emitido = models.DecimalField(max_digits=8, decimal_places=2, default=0)
 
     def __str__(self): 
-        return self.consumo
+        return self.tipo

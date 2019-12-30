@@ -1,0 +1,38 @@
+{% extends "base_generic.html" %}
+
+<!-- FUNCIONES NUESTRAS en TEMPLATETAGS-->
+{% load auth_extras %}
+
+{% block content %}
+<div class="jumbotron jumbotron-fuid">
+  <div class="container">
+    <h1 class="display-4">{{ empresa.nombre }}</h1>
+    <h2 class="lead">{{ titulo }}.</h2>
+  </div>
+</div>
+
+{% if user.is_authenticated %}
+{% if user|empresa:empresa.pk %}
+
+<table>
+  <tr>
+    <th>Activo</th>
+    <th>Descripcion</th>
+    <th>Editar</th>
+    <th>Eliminar</th>
+  </tr>
+{% for activo in activos %}
+<tr>
+  <td>{{ activo.nombre }}</td>
+  <td>{{ activo.descripcion }}</td>
+  <td><a href=# >Editar</a></td>
+  <td><a href=# >Eliminar</a></td>
+</tr>
+{% endfor %}
+</table>
+
+<p><a href=#>Añadir Activo</a></p>
+
+{% endif %}
+{% endif %}
+{% endblock %}

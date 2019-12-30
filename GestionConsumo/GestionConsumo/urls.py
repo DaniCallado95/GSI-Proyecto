@@ -11,4 +11,6 @@ urlpatterns = [
     url(r'^empresa/(?P<pk>\d+)/usuarios/$', views.empresa_usuarios, name='empresa_usuarios'),
     url(r'^empresa/(?P<pk>\d+)/usuarios/addUser$', views.empresa_add_user, name='empresa_add_user'),
     url(r'^empresa/(?P<pk>\d+)/usuarios/deleteUser$', views.empresa_delete_user, name='empresa_delete_user'),
+    url(r'^empresa/(?P<pk>\d+)/activos/$', views.empresa_activos, name='empresa_activos'),
+    url(r'^empresa/(?P<pk>\d+)/consumos/$', views.empresa_consumos, name='empresa_consumos'),
 ]

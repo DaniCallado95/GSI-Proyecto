@@ -134,3 +134,37 @@ def empresa_delete_user(request, pk):
         usuario_empresa.delete()
         user.delete()
         return redirect('empresa_usuarios', pk=pk)
+
+def empresa_activos(request, pk):
+    empresa = get_object_or_404(Empresa, pk=pk)
+    empresa_pk = 0
+    if request.user.is_authenticated:
+        usuario = Usuario.objects.get(user=request.user.id)
+        empresa_pk = usuario.id_empresa.pk
+        activos = []
+        activos = Activo.objects.filter(id_empresa=empresa_pk)
+        if int(pk)==int(empresa_pk):
+            return render(request, 'empresa_activos.html', {'empresa': empresa, 'empresa_pk': empresa_pk, 'titulo': 'Activos', 'activos': activos})
+        else:
+            num_empresas = Empresa.objects.count()
+            return render(request, 'index.html', {'num_empresas': num_empresas, 'empresa_pk': empresa_pk})
+
+def empresa_consumos(request, pk):
+    empresa = get_object_or_404(Empresa, pk=pk)
+    empresa_pk = 0
+    if request.user.is_authenticated:
+        usuario = Usuario.objects.get(user=request.user.id)
+        empresa_pk = usuario.id_empresa.pk
+        consumos = []
+        #consumos = Consumo.objects.filter(id_empresa=empresa_pk)
+        consumos = Consumo.objects.all()
+        if int(pk)==int(empresa_pk):
+            return render(request, 'empresa_consumos.html', {'empresa': empresa, 'empresa_pk': empresa_pk, 'titulo': 'Consumo', 'consumos': consumos})
+        else:
+            num_empresas = Empresa.objects.count()
+            return render(request, 'index.html', {'num_empresas': num_empresas, 'empresa_pk': empresa_pk})
+
+
+
+
+            
