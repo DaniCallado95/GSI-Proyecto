@@ -53,8 +53,8 @@ class Consumo(models.Model):
     )
 
     id_consumo = models.AutoField(primary_key=True)
-    id_empresa = models.ForeignKey("Activo", related_name="empresa", db_column='id_empresa', on_delete=models.CASCADE)
-    id_activo = models.ForeignKey("Activo", related_name="activo", db_column='id_activo', on_delete=models.CASCADE)
+    id_empresa = models.ForeignKey("Empresa", on_delete=models.CASCADE)
+    id_activo = models.ForeignKey("Activo", on_delete=models.CASCADE)
     año = models.PositiveIntegerField(default=current_year(), validators=[MinValueValidator(1984), max_value_current_year])
     tipo = models.CharField(max_length=15, choices=tipos, default='ELECTRICIDAD')
     consumo = models.DecimalField(max_digits=8, decimal_places=2, default=0)

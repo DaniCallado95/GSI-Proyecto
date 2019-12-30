@@ -12,5 +12,10 @@ urlpatterns = [
     url(r'^empresa/(?P<pk>\d+)/usuarios/addUser$', views.empresa_add_user, name='empresa_add_user'),
     url(r'^empresa/(?P<pk>\d+)/usuarios/deleteUser$', views.empresa_delete_user, name='empresa_delete_user'),
     url(r'^empresa/(?P<pk>\d+)/activos/$', views.empresa_activos, name='empresa_activos'),
+    url(r'^empresa/(?P<pk>\d+)/activos/añadir/$', views.empresa_activos_añadir, name='empresa_activos_añadir'),
+    url(r'^empresa/(?P<pk>\d+)/activos/añadir/verifyActivo$', views.verifyActivo, name='verifyActivo'),
+    url(r'^empresa/(?P<pk>\d+)/activos/deleteActivo$', views.deleteActivo, name='deleteActivo'),
+    url(r'^empresa/(?P<pk>\d+)/activos/(?P<id_activo>\d+)/editar/$', views.empresa_activos_editar, name='empresa_activos_editar'),
+    url(r'^empresa/(?P<pk>\d+)/activos/(?P<id_activo>\d+)/editar/editActivo$', views.editActivo, name='editActivo'),
     url(r'^empresa/(?P<pk>\d+)/consumos/$', views.empresa_consumos, name='empresa_consumos'),
 ]

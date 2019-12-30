@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.models import User
 from .models import Empresa, Usuario, Activo, Consumo
-from .forms import EmpresaForm, AdminEmpresaForm
+from .forms import EmpresaForm, AdminEmpresaForm, ActivoForm
 from django.contrib.auth import login
 from django.contrib.auth.models import Group
 from django.http import Http404
@@ -149,6 +149,81 @@ def empresa_activos(request, pk):
             num_empresas = Empresa.objects.count()
             return render(request, 'index.html', {'num_empresas': num_empresas, 'empresa_pk': empresa_pk})
 
+def empresa_activos_añadir(request, pk):
+    empresa = get_object_or_404(Empresa, pk=pk)
+    empresa_pk = 0
+    form_activo = ActivoForm()
+    if request.user.is_authenticated:
+        usuario = Usuario.objects.get(user=request.user.id)
+        empresa_pk = usuario.id_empresa.pk
+        if int(pk)==int(empresa_pk):
+            return render(request, 'empresa_activos_añadir.html', {'empresa': empresa, 'empresa_pk': empresa_pk, 'titulo': 'Añadir Activo', 'form_activo': form_activo})
+        else:
+            num_empresas = Empresa.objects.count()
+            return render(request, 'index.html', {'num_empresas': num_empresas, 'empresa_pk': empresa_pk})
+
+def verifyActivo(request, pk):
+    if request.method == 'POST':
+        form_activo = ActivoForm(request.POST)
+        if form_activo.is_valid():
+            datos = form_activo.cleaned_data
+            empresa = Empresa.objects.get(pk = request.POST.get('id_empresa'))
+            activo = Activo(id_empresa = empresa,nombre = datos.get("nombre"), descripcion = datos.get("descripcion"))
+            activo.save()
+
+            # Si el usuario se crea correctamente 
+            if activo is not None:
+                # Y le redireccionamos a la portada
+                return redirect('empresa_activos', pk=empresa.pk)
+                
+        else:
+            raise Http404
+
+@csrf_protect
+def deleteActivo(request, pk):
+    if request.method == 'POST':
+        id_activo = request.POST.get('id_activo')
+        activo = Activo.objects.get(pk = id_activo)
+        activo.delete()
+        return redirect('empresa_activos', pk=pk)
+
+def empresa_activos_editar(request, pk, id_activo):
+    activo = get_object_or_404(Activo, pk=id_activo)
+    data = {'pk': pk, 'id_empresa': activo.id_empresa, 'nombre': activo.nombre, 'descripcion': activo.descripcion}
+
+    empresa = get_object_or_404(Empresa, pk=pk)
+    empresa_pk = 0
+
+    form_activo = ActivoForm(initial=data)
+
+    if request.user.is_authenticated:
+        usuario = Usuario.objects.get(user=request.user.id)
+        empresa_pk = usuario.id_empresa.pk
+        if int(pk)==int(empresa_pk):
+            return render(request, 'empresa_activos_editar.html', {'empresa': empresa, 'empresa_pk': empresa_pk, 'titulo': 'Editar Activo', 'form_activo': form_activo})
+        else:
+            num_empresas = Empresa.objects.count()
+            return render(request, 'index.html', {'num_empresas': num_empresas, 'empresa_pk': empresa_pk})
+
+def editActivo(request, pk, id_activo):
+    activo = get_object_or_404(Activo, pk=id_activo)
+    if request.method == 'POST':
+        form_activo = ActivoForm(request.POST)
+        if form_activo.is_valid():
+            datos = form_activo.cleaned_data
+            empresa = Empresa.objects.get(pk = pk)
+            activo.nombre = datos.get("nombre")
+            activo.descripcion = datos.get("descripcion")
+            activo.save()
+
+            # Si el usuario se crea correctamente 
+            if activo is not None:
+                # Y le redireccionamos a la portada
+                return redirect('empresa_activos', pk=empresa.pk)
+                
+        else:
+            raise Http404
+            
 def empresa_consumos(request, pk):
     empresa = get_object_or_404(Empresa, pk=pk)
     empresa_pk = 0
@@ -163,8 +238,3 @@ def empresa_consumos(request, pk):
         else:
             num_empresas = Empresa.objects.count()
             return render(request, 'index.html', {'num_empresas': num_empresas, 'empresa_pk': empresa_pk})
-
-
-
-
-            

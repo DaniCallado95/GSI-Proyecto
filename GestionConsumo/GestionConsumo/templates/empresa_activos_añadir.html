@@ -1,0 +1,33 @@
+{% extends "base_generic.html" %}
+
+<!-- FUNCIONES NUESTRAS en TEMPLATETAGS-->
+{% load auth_extras %}
+
+{% block content %}
+<div class="jumbotron jumbotron-fuid">
+  <div class="container">
+    <h1 class="display-4">{{ empresa.nombre }}</h1>
+    <h2 class="lead">{{ titulo }}.</h2>
+  </div>
+</div>
+
+{% if user.is_authenticated %}
+{% if user|empresa:empresa.pk %}
+
+<div class="row">
+  <div class="col-md-8">
+      <h2 class="display-4">Añadir nuevo activo</h2>
+      <form method="POST" class="empresa-form" id="formulario_id" action="./verifyActivo">{% csrf_token %}
+          <div class="form-group">
+              {{ form_activo.as_p }}
+              <input type="hidden" name="id_empresa" value="{{ empresa_pk }}">
+          </div>
+          <button type="submit" class="save btn btn-success">Save</button>
+      </form>
+  </div>
+  <div class="col-md-2"></div>
+</div>
+
+{% endif %}
+{% endif %}
+{% endblock %}

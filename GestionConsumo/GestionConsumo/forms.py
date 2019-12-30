@@ -13,3 +13,10 @@ class AdminEmpresaForm(forms.Form):
     user = forms.CharField(label='Administrador de la empresa', widget=forms.TextInput(attrs={'class':'form-control','placeholder':'Introduzca aqui el nombre del administrador de la empresa'}))
     contrasena = forms.CharField(label='Contraseña del adminsitrador', widget=forms.PasswordInput(attrs={'class':'form-control','placeholder':'Introduzca aqui la contraseña del administrador'}))
         
+class ActivoForm(forms.Form):
+    nombre = forms.CharField(label='Nombre del activo', widget=forms.TextInput(attrs={'class':'form-control','placeholder':'Introduzca aqui el nombre del activo'}))
+    descripcion = forms.CharField(label='Descripcion del activo', widget=forms.TextInput(attrs={'class':'form-control','placeholder':'Introduzca aqui la descripcion del activo'}))
+
+    class Meta:
+        model = Activo
+        fields = ('nombre', 'descripcion',)
