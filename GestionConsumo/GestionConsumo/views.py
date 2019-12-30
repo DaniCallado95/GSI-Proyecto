@@ -156,8 +156,9 @@ def empresa_consumos(request, pk):
         usuario = Usuario.objects.get(user=request.user.id)
         empresa_pk = usuario.id_empresa.pk
         consumos = []
-        #consumos = Consumo.objects.filter(id_empresa=empresa_pk)
-        consumos = Consumo.objects.all()
+        #Sacar solo el consumo de la empresa del usuario
+        consumos = Consumo.objects.filter(id_empresa=empresa_pk)
+        #consumos = Consumo.objects.all()
         if int(pk)==int(empresa_pk):
             return render(request, 'empresa_consumos.html', {'empresa': empresa, 'empresa_pk': empresa_pk, 'titulo': 'Consumo', 'consumos': consumos})
         else:
