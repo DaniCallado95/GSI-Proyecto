@@ -18,4 +18,5 @@ urlpatterns = [
     url(r'^empresa/(?P<pk>\d+)/activos/(?P<id_activo>\d+)/editar/$', views.empresa_activos_editar, name='empresa_activos_editar'),
     url(r'^empresa/(?P<pk>\d+)/activos/(?P<id_activo>\d+)/editar/editActivo$', views.editActivo, name='editActivo'),
     url(r'^empresa/(?P<pk>\d+)/consumos/$', views.empresa_consumos, name='empresa_consumos'),
+    url(r'^empresa/(?P<pk>\d+)/consumos/añadir/$', views.empresa_consumos_añadir, name='empresa_consumos_añadir'),
 ]

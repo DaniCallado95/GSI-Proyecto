@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.models import User
 from .models import Empresa, Usuario, Activo, Consumo
-from .forms import EmpresaForm, AdminEmpresaForm, ActivoForm
+from .forms import EmpresaForm, AdminEmpresaForm, ActivoForm, ConsumoForm
 from django.contrib.auth import login
 from django.contrib.auth.models import Group
 from django.http import Http404
@@ -234,6 +234,21 @@ def empresa_consumos(request, pk):
         consumos = Consumo.objects.filter(id_empresa=empresa_pk)
         if int(pk)==int(empresa_pk):
             return render(request, 'empresa_consumos.html', {'empresa': empresa, 'empresa_pk': empresa_pk, 'titulo': 'Consumo', 'consumos': consumos})
+        else:
+            num_empresas = Empresa.objects.count()
+            return render(request, 'index.html', {'num_empresas': num_empresas, 'empresa_pk': empresa_pk})
+
+def empresa_consumos_añadir(request, pk):
+    empresa = get_object_or_404(Empresa, pk=pk)
+    empresa_pk = 0
+    if request.user.is_authenticated:
+        activos = []
+        usuario = Usuario.objects.get(user=request.user.id)
+        empresa_pk = usuario.id_empresa.pk
+        activos = Activo.objects.filter(id_empresa=empresa_pk)
+        form_consumo = ConsumoForm(activos = activos)
+        if int(pk)==int(empresa_pk):
+            return render(request, 'empresa_consumos_añadir.html', {'empresa': empresa, 'empresa_pk': empresa_pk, 'titulo': 'Añadir Consumo', 'form_consumo': form_consumo})
         else:
             num_empresas = Empresa.objects.count()
             return render(request, 'index.html', {'num_empresas': num_empresas, 'empresa_pk': empresa_pk})

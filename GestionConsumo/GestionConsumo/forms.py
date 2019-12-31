@@ -16,7 +16,28 @@ class AdminEmpresaForm(forms.Form):
 class ActivoForm(forms.Form):
     nombre = forms.CharField(label='Nombre del activo', widget=forms.TextInput(attrs={'class':'form-control','placeholder':'Introduzca aqui el nombre del activo'}))
     descripcion = forms.CharField(label='Descripcion del activo', widget=forms.TextInput(attrs={'class':'form-control','placeholder':'Introduzca aqui la descripcion del activo'}))
-
+    
     class Meta:
         model = Activo
         fields = ('nombre', 'descripcion',)
+
+class ConsumoForm(forms.Form):
+
+    def __init__(self,*args,**kwargs):
+        self.activos = kwargs.pop('activos')
+        super(ConsumoForm,self).__init__(*args,**kwargs)
+        print(self.activos[0])
+        self.fields['activos'] = forms.ChoiceField(choices=tuple([(name, name) for name in self.activos]))
+
+    tipos = [('1', 'ELECTRICIDAD'), ('2', 'AGUA'),('2', 'GASOLINA'),('2', 'DIESEL'),('2', 'GAS')]
+
+    año = forms.IntegerField(label='Año de consumo', widget=forms.NumberInput(attrs={'class':'form-control','placeholder':'Año de consumo'}))
+    tipo = forms.ChoiceField(choices=tipos)
+    
+    consumo = forms.CharField(label='Consumo', widget=forms.TextInput(attrs={'class':'form-control','placeholder':'Introduzca aqui el consumo'}))
+    co2_emitido = forms.CharField(label='CO2_emitido', widget=forms.TextInput(attrs={'class':'form-control','placeholder':'Introduzca aqui el co2_emitido'}))
+    
+
+    class Meta:
+        model = Consumo
+        fields = ('año','tipo','activos','consumo','co2_emitido')
