@@ -31,12 +31,17 @@
   </tr>
 {% for consumo in consumos %}
   <tr>
-    <td>{{ consumo.id_activo.nombre }}</td>
+    <td>{{ consumo.id_activo }}</td>
     <td>{{ consumo.tipo }}</td>
     <td>{{ consumo.consumo }}</td>
     <td>{{ consumo.co2_emitido }}</td>
-    <td><a href=# >Editar</a></td>
-    <td><a href=# >Eliminar</a></td>
+    <td><a href="{% url 'empresa_consumos_editar' pk=empresa_pk id_consumo=consumo.pk %}?next={{request.path}}" >Editar</a></td>
+    <td>
+    <form action="./deleteConsumo" method="post" class="forms_delete_consumo">{% csrf_token %}
+    <input type="hidden" name="id_consumo" value="{{ consumo.pk }}">
+    <input type="submit" value="Eliminar" class="btn btn-danger btn-block">
+    </form>
+  </td>
   </tr>
 {% endfor %}
 </table>

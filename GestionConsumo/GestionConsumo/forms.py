@@ -26,7 +26,6 @@ class ConsumoForm(forms.Form):
     def __init__(self,*args,**kwargs):
         self.activos = kwargs.pop('activos')
         super(ConsumoForm,self).__init__(*args,**kwargs)
-        print(self.activos[0])
         self.fields['activos'] = forms.ChoiceField(choices=tuple([(name, name) for name in self.activos]))
 
     tipos = [('1', 'ELECTRICIDAD'), ('2', 'AGUA'),('2', 'GASOLINA'),('2', 'DIESEL'),('2', 'GAS')]
@@ -37,7 +36,6 @@ class ConsumoForm(forms.Form):
     consumo = forms.CharField(label='Consumo', widget=forms.TextInput(attrs={'class':'form-control','placeholder':'Introduzca aqui el consumo'}))
     co2_emitido = forms.CharField(label='CO2_emitido', widget=forms.TextInput(attrs={'class':'form-control','placeholder':'Introduzca aqui el co2_emitido'}))
     
-
     class Meta:
         model = Consumo
-        fields = ('año','tipo','activos','consumo','co2_emitido')
+        fields = ('año','tipo','consumo','co2_emitido','activos')

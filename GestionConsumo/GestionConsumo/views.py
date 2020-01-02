@@ -252,3 +252,70 @@ def empresa_consumos_añadir(request, pk):
         else:
             num_empresas = Empresa.objects.count()
             return render(request, 'index.html', {'num_empresas': num_empresas, 'empresa_pk': empresa_pk})
+
+def verifyConsumo(request, pk):
+    if request.method == 'POST':
+        form_consumo = ActivoForm(request.POST)
+        print("Antes")
+        if form_consumo.is_valid():
+            datos = form_consumo.cleaned_data
+            print(request.POST.get('id_empresa'))
+            empresa = Empresa.objects.get(pk = request.POST.get('id_empresa'))
+            consumo = Consumo(id_empresa = empresa, id_activo = datos.get("activos"),año = datos.get("año"),tipo = datos.get("tipo"),consumo = datos.get("consumo"),co2_emitido = datos.get("co2_emitido"))
+            consumo.save()
+
+            # Si el consumo se crea correctamente 
+            if consumo is not None:
+                # Y le redireccionamos a la portada
+                return redirect('empresa_consumos', pk=empresa.pk)
+                
+        else:
+            raise Http404
+
+@csrf_protect
+def deleteConsumo(request, pk):
+    if request.method == 'POST':
+        id_consumo = request.POST.get('id_consumo')
+        consumo = Consumo.objects.get(pk = id_consumo)
+        consumo.delete()
+        return redirect('empresa_consumos', pk=pk)
+
+def empresa_consumos_editar(request, pk, id_consumo):
+    consumo = get_object_or_404(Consumo, pk=id_consumo)
+    data = {'pk': pk, 'id_empresa': consumo.id_empresa, 'id_activo': consumo.id_activo, 'año': consumo.año,'tipo': consumo.tipo,'consumo': consumo.consumo,'co2_emitido': consumo.co2_emitido}
+
+    empresa = get_object_or_404(Empresa, pk=pk)
+    empresa_pk = 0
+
+    form_consumo = ConsumoForm(initial=data)
+
+    if request.user.is_authenticated:
+        usuario = Usuario.objects.get(user=request.user.id)
+        empresa_pk = usuario.id_empresa.pk
+        if int(pk)==int(empresa_pk):
+            return render(request, 'empresa_consumos_editar.html', {'empresa': empresa, 'empresa_pk': empresa_pk, 'titulo': 'Editar Consumo', 'form_consumo': form_consumo})
+        else:
+            num_empresas = Empresa.objects.count()
+            return render(request, 'index.html', {'num_empresas': num_empresas, 'empresa_pk': empresa_pk})
+
+
+def editConsumo(request, pk, id_consumo):
+    consumo = get_object_or_404(Consumo, pk=id_consumo)
+    if request.method == 'POST':
+        form_Consumo = ConsumoForm(request.POST)
+        if form_Consumo.is_valid():
+            datos = form_Consumo.cleaned_data
+            empresa = Empresa.objects.get(pk = pk)
+            consumo.año = datos.get("año")
+            consumo.tipo = datos.get("tipo")
+            consumo.consumo = datos.get("consumo")
+            consumo.co2_emitido = datos.get("co2_emitido")
+            activo.save()
+
+            # Si el usuario se crea correctamente 
+            if consumo is not None:
+                # Y le redireccionamos a la portada
+                return redirect('empresa_consumos', pk=empresa.pk)
+                
+        else:
+            raise Http404

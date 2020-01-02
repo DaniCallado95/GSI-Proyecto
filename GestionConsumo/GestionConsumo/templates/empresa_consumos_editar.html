@@ -16,11 +16,10 @@
 
 <div class="row">
   <div class="col-md-8">
-      <h2 class="display-4">Añadir nuevo consumo</h2>
-      <form method="POST" class="empresa-form" id="formulario_id" action="./verifyConsumo">{% csrf_token %}
+      <h2 class="display-4">Editar consumo</h2>
+      <form method="POST" class="empresa-form" id="formulario_id" action="./editConsumo">{% csrf_token %}
           <div class="form-group">
               {{ form_consumo.as_p }}
-              <input type="hidden" name="id_empresa" value="{{ empresa_pk }}">
           </div>
           <button type="submit" class="save btn btn-success">Guardar</button>
       </form>
