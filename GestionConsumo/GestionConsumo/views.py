@@ -246,7 +246,8 @@ def empresa_consumos_añadir(request, pk):
         usuario = Usuario.objects.get(user=request.user.id)
         empresa_pk = usuario.id_empresa.pk
         activos = Activo.objects.filter(id_empresa=empresa_pk)
-        form_consumo = ConsumoForm(activos = activos)
+        print(activos[1].id_activo)
+        form_consumo = ConsumoForm(activos)
         if int(pk)==int(empresa_pk):
             return render(request, 'empresa_consumos_añadir.html', {'empresa': empresa, 'empresa_pk': empresa_pk, 'titulo': 'Añadir Consumo', 'form_consumo': form_consumo})
         else:
@@ -255,23 +256,18 @@ def empresa_consumos_añadir(request, pk):
 
 def verifyConsumo(request, pk):
     if request.method == 'POST':
-        form_consumo = ActivoForm(request.POST)
-        print("Antes")
-        if form_consumo.is_valid():
-            datos = form_consumo.cleaned_data
-            print(request.POST.get('id_empresa'))
-            empresa = Empresa.objects.get(pk = request.POST.get('id_empresa'))
-            consumo = Consumo(id_empresa = empresa, id_activo = datos.get("activos"),año = datos.get("año"),tipo = datos.get("tipo"),consumo = datos.get("consumo"),co2_emitido = datos.get("co2_emitido"))
-            consumo.save()
+        print(request.POST)
+        empresa = Empresa.objects.get(pk = request.POST.get('id_empresa'))
+        consumo = Consumo(id_empresa = empresa, id_activo = int(request.POST["activos"]),año = request.POST["año"],tipo = request.POST["tipo"],consumo = request.POST["consumo"],co2_emitido = request.POST["co2_emitido"])
+        consumo.save()
 
-            # Si el consumo se crea correctamente 
-            if consumo is not None:
-                # Y le redireccionamos a la portada
-                return redirect('empresa_consumos', pk=empresa.pk)
-                
-        else:
-            raise Http404
-
+        # Si el consumo se crea correctamente 
+        if consumo is not None:
+            # Y le redireccionamos a la portada
+            return redirect('empresa_consumos', pk=empresa.pk)
+            
+    else:
+        raise Http404
 @csrf_protect
 def deleteConsumo(request, pk):
     if request.method == 'POST':

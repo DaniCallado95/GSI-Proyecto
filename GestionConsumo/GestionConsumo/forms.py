@@ -23,10 +23,9 @@ class ActivoForm(forms.Form):
 
 class ConsumoForm(forms.Form):
 
-    def __init__(self,*args,**kwargs):
-        self.activos = kwargs.pop('activos')
+    def __init__(self,activos,*args,**kwargs):
         super(ConsumoForm,self).__init__(*args,**kwargs)
-        self.fields['activos'] = forms.ChoiceField(choices=tuple([(name, name) for name in self.activos]))
+        self.fields['activos'] = forms.ChoiceField(choices=tuple([(activos[x].id_activo, activos[x]) for x in range(len(activos))]))
 
     tipos = [('1', 'ELECTRICIDAD'), ('2', 'AGUA'),('2', 'GASOLINA'),('2', 'DIESEL'),('2', 'GAS')]
 
