@@ -23,4 +23,5 @@ urlpatterns = [
     url(r'^empresa/(?P<pk>\d+)/consumos/deleteConsumo$', views.deleteConsumo, name='deleteConsumo'),
     url(r'^empresa/(?P<pk>\d+)/consumos/(?P<id_consumo>\d+)/editar/$', views.empresa_consumos_editar, name='empresa_consumos_editar'),
     url(r'^empresa/(?P<pk>\d+)/consumos/(?P<id_consumo>\d+)/editar/editConsumo$', views.editConsumo, name='editConsumo'),
+    url(r'^empresa/(?P<pk>\d+)/consumos/cargarAno/$', views.cargarAno, name='cargarAno'),
 ]

@@ -25,7 +25,7 @@
 <tr>
   <td>{{ activo.nombre }}</td>
   <td>{{ activo.descripcion }}</td>
-  <td><a href="{% url 'empresa_activos_editar' pk=empresa_pk id_activo=activo.pk %}?next={{request.path}}" >Editar</a></td>
+  <td><a href="{% url 'empresa_activos_editar' pk=empresa_pk id_activo=activo.pk %}?next={{request.path}}" class="btn btn-primary btn-block">Editar</a></td>
   <td>
     <form action="./deleteActivo" method="post" class="forms_delete_activo">{% csrf_token %}
     <input type="hidden" name="id_activo" value="{{ activo.pk }}">
@@ -35,8 +35,8 @@
 </tr>
 {% endfor %}
 </table>
-
-<p><a href="./añadir">Añadir Activo</a></p>
+<br>
+<p><a href="./añadir" class="btn btn-success">Añadir Activo</a></p>
 
 {% endif %}
 {% endif %}

@@ -40,7 +40,7 @@ class Activo(models.Model):
     descripcion = models.TextField(max_length=500)
 
     def __str__(self): 
-        return self.descripcion
+        return self.nombre
 
 class Consumo(models.Model):
     

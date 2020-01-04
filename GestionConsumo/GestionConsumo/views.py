@@ -232,8 +232,10 @@ def empresa_consumos(request, pk):
         empresa_pk = usuario.id_empresa.pk
         consumos = []
         consumos = Consumo.objects.filter(id_empresa=empresa_pk)
+        anos = Consumo.objects.filter(id_empresa=empresa_pk).values_list('año', flat=True)
+
         if int(pk)==int(empresa_pk):
-            return render(request, 'empresa_consumos.html', {'empresa': empresa, 'empresa_pk': empresa_pk, 'titulo': 'Consumo', 'consumos': consumos})
+            return render(request, 'empresa_consumos.html', {'empresa': empresa, 'empresa_pk': empresa_pk, 'titulo': 'Consumo', 'anos': anos})
         else:
             num_empresas = Empresa.objects.count()
             return render(request, 'index.html', {'num_empresas': num_empresas, 'empresa_pk': empresa_pk})
@@ -246,7 +248,7 @@ def empresa_consumos_añadir(request, pk):
         usuario = Usuario.objects.get(user=request.user.id)
         empresa_pk = usuario.id_empresa.pk
         activos = Activo.objects.filter(id_empresa=empresa_pk)
-        print(activos[1].id_activo)
+        # print(activos[1].id_activo)
         form_consumo = ConsumoForm(activos)
         if int(pk)==int(empresa_pk):
             return render(request, 'empresa_consumos_añadir.html', {'empresa': empresa, 'empresa_pk': empresa_pk, 'titulo': 'Añadir Consumo', 'form_consumo': form_consumo})
@@ -256,9 +258,9 @@ def empresa_consumos_añadir(request, pk):
 
 def verifyConsumo(request, pk):
     if request.method == 'POST':
-        print(request.POST)
+        activo = Activo.objects.get(pk=request.POST["activos"])
         empresa = Empresa.objects.get(pk = request.POST.get('id_empresa'))
-        consumo = Consumo(id_empresa = empresa, id_activo = int(request.POST["activos"]),año = request.POST["año"],tipo = request.POST["tipo"],consumo = request.POST["consumo"],co2_emitido = request.POST["co2_emitido"])
+        consumo = Consumo(id_empresa = empresa, id_activo = activo,año = request.POST["año"],tipo = request.POST["tipo"],consumo = request.POST["consumo"],co2_emitido = request.POST["co2_emitido"])
         consumo.save()
 
         # Si el consumo se crea correctamente 
@@ -278,13 +280,12 @@ def deleteConsumo(request, pk):
 
 def empresa_consumos_editar(request, pk, id_consumo):
     consumo = get_object_or_404(Consumo, pk=id_consumo)
-    data = {'pk': pk, 'id_empresa': consumo.id_empresa, 'id_activo': consumo.id_activo, 'año': consumo.año,'tipo': consumo.tipo,'consumo': consumo.consumo,'co2_emitido': consumo.co2_emitido}
-
     empresa = get_object_or_404(Empresa, pk=pk)
     empresa_pk = 0
 
-    form_consumo = ConsumoForm(initial=data)
-
+    data = {'pk': pk, 'id_empresa': consumo.id_empresa, 'año': consumo.año,'tipo': consumo.tipo,'consumo': consumo.consumo,'co2_emitido': consumo.co2_emitido}
+    
+    form_consumo = ConsumoForm(Activo.objects.filter(nombre=consumo.id_activo), initial=data)
     if request.user.is_authenticated:
         usuario = Usuario.objects.get(user=request.user.id)
         empresa_pk = usuario.id_empresa.pk
@@ -296,22 +297,29 @@ def empresa_consumos_editar(request, pk, id_consumo):
 
 
 def editConsumo(request, pk, id_consumo):
-    consumo = get_object_or_404(Consumo, pk=id_consumo)
     if request.method == 'POST':
-        form_Consumo = ConsumoForm(request.POST)
-        if form_Consumo.is_valid():
-            datos = form_Consumo.cleaned_data
-            empresa = Empresa.objects.get(pk = pk)
-            consumo.año = datos.get("año")
-            consumo.tipo = datos.get("tipo")
-            consumo.consumo = datos.get("consumo")
-            consumo.co2_emitido = datos.get("co2_emitido")
-            activo.save()
+        consumo_borrar = Consumo.objects.get(id_activo=request.POST["activos"])
+        activo = Activo.objects.get(pk=request.POST["activos"])
+        empresa = Empresa.objects.get(pk=pk)
+        consumo = Consumo(id_empresa = empresa, id_activo = activo,año = request.POST["año"],tipo = request.POST["tipo"],consumo = request.POST["consumo"],co2_emitido = request.POST["co2_emitido"])
+        consumo_borrar.delete()
+        consumo.save()
 
-            # Si el usuario se crea correctamente 
-            if consumo is not None:
-                # Y le redireccionamos a la portada
-                return redirect('empresa_consumos', pk=empresa.pk)
+        # Si el consumo se crea correctamente 
+        if consumo is not None:
+            # Y le redireccionamos a la portada
+            return redirect('empresa_consumos', pk=pk)
                 
         else:
             raise Http404
+
+def cargarAno(request, pk):
+    empresa = get_object_or_404(Empresa, pk=pk)
+    empresa_pk = 0
+    if request.user.is_authenticated:
+        request.GET['ano']
+        usuario = Usuario.objects.get(user=request.user.id)
+        empresa_pk = usuario.id_empresa.pk
+        consumos = []
+        consumos = Consumo.objects.filter(id_empresa=empresa_pk, año=request.GET['ano'])
+        return render(request, 'consumos_anos.html', {'empresa_pk': empresa_pk, 'consumos': consumos})

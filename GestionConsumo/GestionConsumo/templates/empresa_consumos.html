@@ -14,12 +14,14 @@
 {% if user.is_authenticated %}
 {% if user|empresa:empresa.pk %}
 
-<p>Año: 
-  <select>
-    <option value=""></option>
+<p><strong>Año:</strong>
+  <select class="form-control w-25" id="anoCambiar">
+    {% for a in anos %}
+    <option value="{{ a }}">{{ a }}</option>
+    {% endfor %}
   </select>
 </p>
-
+<div id="aqui"></div>
 <table>
   <tr>
     <th>Activo</th>
@@ -29,25 +31,26 @@
     <th>Editar</th>
     <th>Eliminar</th>
   </tr>
-{% for consumo in consumos %}
-  <tr>
-    <td>{{ consumo.id_activo }}</td>
-    <td>{{ consumo.tipo }}</td>
-    <td>{{ consumo.consumo }}</td>
-    <td>{{ consumo.co2_emitido }}</td>
-    <td><a href="{% url 'empresa_consumos_editar' pk=empresa_pk id_consumo=consumo.pk %}?next={{request.path}}" >Editar</a></td>
-    <td>
-    <form action="./deleteConsumo" method="post" class="forms_delete_consumo">{% csrf_token %}
-    <input type="hidden" name="id_consumo" value="{{ consumo.pk }}">
-    <input type="submit" value="Eliminar" class="btn btn-danger btn-block">
-    </form>
-  </td>
-  </tr>
-{% endfor %}
 </table>
+<br>
+<p><a href="./añadir" class="btn btn-success">Añadir Consumo</a></p>
+<script>
+  $(document).ready(function () {
 
-<p><a href="./añadir">Añadir Consumo</a></p>
-
+    $('#anoCambiar').change(function (e) {
+      var url = "./cargarAno?ano=" + $('#anoCambiar option:selected').val();
+      //alert(url)
+      $.ajax({
+        url: url,
+        success: function (result) {
+          console.log(result);
+          $('.filas').remove();
+          $("tr").after(result);
+        }
+      });
+    });
+  });
+</script>
 {% endif %}
 {% endif %}
 {% endblock %}
