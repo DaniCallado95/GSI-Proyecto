@@ -323,3 +323,21 @@ def cargarAno(request, pk):
         consumos = []
         consumos = Consumo.objects.filter(id_empresa=empresa_pk, año=request.GET['ano'])
         return render(request, 'consumos_anos.html', {'empresa_pk': empresa_pk, 'consumos': consumos})
+
+
+def empresa_visualizacion(request, pk):
+    empresa = get_object_or_404(Empresa, pk=pk)
+    empresa_pk = 0
+    if request.user.is_authenticated:
+        usuario = Usuario.objects.get(user=request.user.id)
+        empresa_pk = usuario.id_empresa.pk
+        consumos = []
+        consumos = Consumo.objects.filter(id_empresa=empresa_pk)
+        x=[]
+        for consumo in consumos:
+            x.append(consumo.año)
+        if int(pk)==int(empresa_pk):
+            return render(request, 'empresa_visualizacion.html', {'empresa': empresa, 'empresa_pk': empresa_pk, 'titulo': 'Graficos','output':'grafica'})
+        else:
+            num_empresas = Empresa.objects.count()
+            return render(request, 'index.html', {'num_empresas': num_empresas, 'empresa_pk': empresa_pk})

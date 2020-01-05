@@ -15,14 +15,14 @@
 {% if user|empresa:empresa.pk %}
 {% if user|has_group:"administrador" %}
 <ul class="nav nav-pills nav-stacked">
-  <li><a href="#">Visualización</a></li>
+  <li><a href="./visualizacion">Visualización</a></li>
   <li><a href="./activos">Activos</a></li>
   <li><a href="./consumos">Consumos</a></li>
   <li><a href="./usuarios">Usuarios</a></li>
 </ul>
 {% else %}
 <ul class="nav nav-pills nav-stacked">
-  <li><a href="#">Visualización</a></li>
+  <li><a href="./visualizacion">Visualización</a></li>
   <li><a href="./activos">Activos</a></li>
   <li><a href="./consumos">Consumos</a></li>
 </ul>

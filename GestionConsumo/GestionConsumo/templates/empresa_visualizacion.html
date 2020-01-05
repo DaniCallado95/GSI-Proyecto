@@ -1,0 +1,25 @@
+{% extends "base_generic.html" %}
+
+<!-- FUNCIONES NUESTRAS en TEMPLATETAGS-->
+{% load auth_extras %}
+
+{% block content %}
+<div class="jumbotron jumbotron-fuid">
+  <div class="container">
+    <h1 class="display-4">{{ empresa.nombre }}</h1>
+    <h2 class="lead">{{ titulo }}.</h2>
+  </div>
+</div>
+
+{% if user.is_authenticated %}
+{% if user|empresa:empresa.pk %}
+
+<h1>Aqui iran las graficas</h1>
+
+<div id="chart-1">{{ output|safe }}</div>
+
+{% endif %}
+{% endif %}
+
+
+{% endblock %}
