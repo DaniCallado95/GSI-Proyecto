@@ -8,6 +8,8 @@ from django.http import Http404
 from django.views.decorators.csrf import csrf_protect
 from graphos.sources.simple import SimpleDataSource
 from graphos.renderers.gchart import LineChart
+from graphos.renderers.gchart import ColumnChart
+from graphos.renderers.gchart import PieChart
 from django.db.models import Sum
 # Create your views here.
 
@@ -333,18 +335,27 @@ def empresa_visualizacion(request, pk):
     if request.user.is_authenticated:
         usuario = Usuario.objects.get(user=request.user.id)
         empresa_pk = usuario.id_empresa.pk
-        consumos = []
-        consumos = Consumo.objects.filter(id_empresa=empresa_pk).values('año').annotate(consumo = Sum('consumo'))
-        datos = [['Año','Consumo total']]
-        for consumo in consumos:
-            datos.append([consumo['año'],int(consumo['consumo'])])
-        print(datos)
+        consumosPorAño = []
+        consumosPorAño = Consumo.objects.filter(id_empresa=empresa_pk).values('año').annotate(consumo = Sum('consumo'))
+        datosChart1 = [['Año','Consumo total']]
+        for consumo in consumosPorAño:
+            datosChart1.append([consumo['año'],int(consumo['consumo'])])
+        consumosPorActivo = []
+        consumosPorActivo = Consumo.objects.filter(id_empresa=empresa_pk).values('id_activo').annotate(consumo = Sum('consumo'))
+        datosChart2 = [['Activo','Consumo total']]
+        for consumo in consumosPorActivo:
+            nombreActivo = Activo.objects.filter(pk=consumo['id_activo']).distinct()
+            print(nombreActivo[0])
+            datosChart2.append([str(nombreActivo[0]),int(consumo['consumo'])])
+        
         if int(pk)==int(empresa_pk):
             # DataSource object
-            data_source = SimpleDataSource(data=datos)
+            data_source1 = SimpleDataSource(data=datosChart1)
+            data_source2 = SimpleDataSource(data=datosChart2)
             # Chart object
-            chart = LineChart(data_source)
-            return render(request, 'empresa_visualizacion.html', {'empresa': empresa, 'empresa_pk': empresa_pk, 'titulo': 'Graficos','chart':chart})
+            chart1 = ColumnChart(data_source1,options={'title':'Consumo total por año'})
+            chart2 = PieChart(data_source2,options={'title':'Consumo total por activo'})
+            return render(request, 'empresa_visualizacion.html', {'empresa': empresa, 'empresa_pk': empresa_pk, 'titulo': 'Graficos','chart1':chart1,'chart2':chart2})
         else:
             num_empresas = Empresa.objects.count()
             return render(request, 'index.html', {'num_empresas': num_empresas, 'empresa_pk': empresa_pk})

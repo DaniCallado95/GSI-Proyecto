@@ -13,3 +13,6 @@ delete_data:
 # Previamente hay que montar el entorno virtual
 montar_django:
 	pip install django==2.2.7
+
+montar_graphos:
+	pip install django-graphos
