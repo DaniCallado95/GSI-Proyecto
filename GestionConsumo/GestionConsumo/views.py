@@ -6,6 +6,9 @@ from django.contrib.auth import login
 from django.contrib.auth.models import Group
 from django.http import Http404
 from django.views.decorators.csrf import csrf_protect
+from graphos.sources.simple import SimpleDataSource
+from graphos.renderers.gchart import LineChart
+from django.db.models import Sum
 # Create your views here.
 
 def index(request):
@@ -232,8 +235,7 @@ def empresa_consumos(request, pk):
         empresa_pk = usuario.id_empresa.pk
         consumos = []
         consumos = Consumo.objects.filter(id_empresa=empresa_pk)
-        anos = Consumo.objects.filter(id_empresa=empresa_pk).values_list('año', flat=True)
-
+        anos = Consumo.objects.filter(id_empresa=empresa_pk).values_list('año', flat=True).distinct()
         if int(pk)==int(empresa_pk):
             return render(request, 'empresa_consumos.html', {'empresa': empresa, 'empresa_pk': empresa_pk, 'titulo': 'Consumo', 'anos': anos})
         else:
@@ -332,12 +334,17 @@ def empresa_visualizacion(request, pk):
         usuario = Usuario.objects.get(user=request.user.id)
         empresa_pk = usuario.id_empresa.pk
         consumos = []
-        consumos = Consumo.objects.filter(id_empresa=empresa_pk)
-        x=[]
+        consumos = Consumo.objects.filter(id_empresa=empresa_pk).values('año').annotate(consumo = Sum('consumo'))
+        datos = [['Año','Consumo total']]
         for consumo in consumos:
-            x.append(consumo.año)
+            datos.append([consumo['año'],int(consumo['consumo'])])
+        print(datos)
         if int(pk)==int(empresa_pk):
-            return render(request, 'empresa_visualizacion.html', {'empresa': empresa, 'empresa_pk': empresa_pk, 'titulo': 'Graficos','output':'grafica'})
+            # DataSource object
+            data_source = SimpleDataSource(data=datos)
+            # Chart object
+            chart = LineChart(data_source)
+            return render(request, 'empresa_visualizacion.html', {'empresa': empresa, 'empresa_pk': empresa_pk, 'titulo': 'Graficos','chart':chart})
         else:
             num_empresas = Empresa.objects.count()
             return render(request, 'index.html', {'num_empresas': num_empresas, 'empresa_pk': empresa_pk})

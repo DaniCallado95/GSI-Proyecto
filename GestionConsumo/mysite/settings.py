@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'GestionConsumo',
     'django-rest-framework',
     'django_altair',
+    'graphos'
 ]
 
 MIDDLEWARE = [

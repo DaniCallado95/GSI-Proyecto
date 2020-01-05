@@ -14,9 +14,9 @@
 {% if user.is_authenticated %}
 {% if user|empresa:empresa.pk %}
 
-<h1>Aqui iran las graficas</h1>
+<h1>Consumo total por años</h1>
 
-<div id="chart-1">{{ output|safe }}</div>
+<div id="chart-1">{{ chart.as_html |safe }}</div>
 
 {% endif %}
 {% endif %}
