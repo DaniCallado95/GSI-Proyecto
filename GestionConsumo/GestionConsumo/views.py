@@ -237,7 +237,7 @@ def empresa_consumos(request, pk):
         empresa_pk = usuario.id_empresa.pk
         consumos = []
         consumos = Consumo.objects.filter(id_empresa=empresa_pk)
-        anos = Consumo.objects.filter(id_empresa=empresa_pk).values_list('año', flat=True).distinct()
+        anos = Consumo.objects.filter(id_empresa=empresa_pk).values_list('año', flat=True).distinct().order_by('año')
         if int(pk)==int(empresa_pk):
             return render(request, 'empresa_consumos.html', {'empresa': empresa, 'empresa_pk': empresa_pk, 'titulo': 'Consumo', 'anos': anos})
         else:
@@ -264,7 +264,8 @@ def verifyConsumo(request, pk):
     if request.method == 'POST':
         activo = Activo.objects.get(pk=request.POST["activos"])
         empresa = Empresa.objects.get(pk = request.POST.get('id_empresa'))
-        consumo = Consumo(id_empresa = empresa, id_activo = activo,año = request.POST["año"],tipo = request.POST["tipo"],consumo = request.POST["consumo"],co2_emitido = request.POST["co2_emitido"])
+        consumo = Consumo(id_empresa = empresa, id_activo = activo,año = request.POST["año"],tipo = request.POST["tipo"],consumo = request.POST["consumo"])
+        consumo.co2_emitido = convertir(request.POST["tipo"],request.POST["consumo"])
         consumo.save()
 
         # Si el consumo se crea correctamente 
@@ -274,6 +275,7 @@ def verifyConsumo(request, pk):
             
     else:
         raise Http404
+
 @csrf_protect
 def deleteConsumo(request, pk):
     if request.method == 'POST':
@@ -287,7 +289,7 @@ def empresa_consumos_editar(request, pk, id_consumo):
     empresa = get_object_or_404(Empresa, pk=pk)
     empresa_pk = 0
 
-    data = {'pk': pk, 'id_empresa': consumo.id_empresa, 'año': consumo.año,'tipo': consumo.tipo,'consumo': consumo.consumo,'co2_emitido': consumo.co2_emitido}
+    data = {'pk': pk, 'id_empresa': consumo.id_empresa, 'año': consumo.año,'tipo': consumo.tipo,'consumo': consumo.consumo}
     
     form_consumo = ConsumoForm(Activo.objects.filter(nombre=consumo.id_activo), initial=data)
     if request.user.is_authenticated:
@@ -302,17 +304,18 @@ def empresa_consumos_editar(request, pk, id_consumo):
 
 def editConsumo(request, pk, id_consumo):
     if request.method == 'POST':
-        consumo_borrar = Consumo.objects.get(id_activo=request.POST["activos"])
+        consumo_borrar = Consumo.objects.get(pk=id_consumo)
         activo = Activo.objects.get(pk=request.POST["activos"])
         empresa = Empresa.objects.get(pk=pk)
-        consumo = Consumo(id_empresa = empresa, id_activo = activo,año = request.POST["año"],tipo = request.POST["tipo"],consumo = request.POST["consumo"],co2_emitido = request.POST["co2_emitido"])
+        consumo = Consumo(id_empresa = empresa, id_activo = activo,año = request.POST["año"],tipo = request.POST["tipo"],consumo = request.POST["consumo"])
         consumo_borrar.delete()
+        consumo.co2_emitido = convertir(request.POST["tipo"],request.POST["consumo"])
         consumo.save()
 
         # Si el consumo se crea correctamente 
         if consumo is not None:
             # Y le redireccionamos a la portada
-            return redirect('empresa_consumos', pk=pk)
+            return redirect('empresa_consumos', pk=empresa.pk)
                 
         else:
             raise Http404
@@ -336,26 +339,70 @@ def empresa_visualizacion(request, pk):
         usuario = Usuario.objects.get(user=request.user.id)
         empresa_pk = usuario.id_empresa.pk
         consumosPorAño = []
-        consumosPorAño = Consumo.objects.filter(id_empresa=empresa_pk).values('año').annotate(consumo = Sum('consumo'))
+        consumosPorAño = Consumo.objects.filter(id_empresa=pk).values('año').annotate(consumo = Sum('consumo'))
         datosChart1 = [['Año','Consumo total']]
         for consumo in consumosPorAño:
             datosChart1.append([consumo['año'],int(consumo['consumo'])])
         consumosPorActivo = []
-        consumosPorActivo = Consumo.objects.filter(id_empresa=empresa_pk).values('id_activo').annotate(consumo = Sum('consumo'))
+        consumosPorActivo = Consumo.objects.filter(id_empresa=pk).values('id_activo').annotate(consumo = Sum('consumo'))
         datosChart2 = [['Activo','Consumo total']]
         for consumo in consumosPorActivo:
-            nombreActivo = Activo.objects.filter(pk=consumo['id_activo']).distinct()
-            print(nombreActivo[0])
+            nombreActivo = Activo.objects.filter(pk=consumo['id_activo'])
+            datosChart2.append([str(nombreActivo[0]),int(consumo['consumo'])])
+
+        consumosPorTipo = []
+        consumosPorTipo = Consumo.objects.filter(id_empresa=pk).values('tipo').annotate(consumo = Sum('consumo'))
+        datosChart3 = [['Tipo','Consumo total']]
+        for consumo in consumosPorTipo:
+            datosChart3.append([str(consumo['tipo']),int(consumo['consumo'])])
+        
+        # DataSource object
+        data_source1 = SimpleDataSource(data=datosChart1)
+        data_source2 = SimpleDataSource(data=datosChart2)
+        data_source3 = SimpleDataSource(data=datosChart3)
+        # Chart object
+        chart1 = ColumnChart(data_source1,options={'title':'Consumo total por año'})
+        chart2 = PieChart(data_source2,options={'title':'Consumo total por activo'})
+        chart3 = PieChart(data_source3,options={'title':'Consumo total por tipo'})
+        return render(request, 'empresa_visualizacion.html', {'empresa': empresa, 'empresa_pk': empresa_pk, 'titulo': 'Graficos','chart1':chart1,'chart2':chart2, 'chart3':chart3})
+        
+    else:
+        consumosPorAño = []
+        consumosPorAño = Consumo.objects.filter(id_empresa=pk).values('año').annotate(consumo = Sum('consumo'))
+        datosChart1 = [['Año','Consumo total']]
+        for consumo in consumosPorAño:
+            datosChart1.append([consumo['año'],int(consumo['consumo'])])
+        consumosPorActivo = []
+        consumosPorActivo = Consumo.objects.filter(id_empresa=pk).values('id_activo').annotate(consumo = Sum('consumo'))
+        datosChart2 = [['Activo','Consumo total']]
+        for consumo in consumosPorActivo:
+            nombreActivo = Activo.objects.filter(pk=consumo['id_activo'])
             datosChart2.append([str(nombreActivo[0]),int(consumo['consumo'])])
         
-        if int(pk)==int(empresa_pk):
-            # DataSource object
-            data_source1 = SimpleDataSource(data=datosChart1)
-            data_source2 = SimpleDataSource(data=datosChart2)
-            # Chart object
-            chart1 = ColumnChart(data_source1,options={'title':'Consumo total por año'})
-            chart2 = PieChart(data_source2,options={'title':'Consumo total por activo'})
-            return render(request, 'empresa_visualizacion.html', {'empresa': empresa, 'empresa_pk': empresa_pk, 'titulo': 'Graficos','chart1':chart1,'chart2':chart2})
-        else:
-            num_empresas = Empresa.objects.count()
-            return render(request, 'index.html', {'num_empresas': num_empresas, 'empresa_pk': empresa_pk})
+        consumosPorTipo = []
+        consumosPorTipo = Consumo.objects.filter(id_empresa=pk).values('tipo').annotate(consumo = Sum('consumo'))
+        datosChart3 = [['Tipo','Consumo total']]
+        for consumo in consumosPorTipo:
+            datosChart3.append([str(consumo['tipo']),int(consumo['consumo'])])
+
+        # DataSource object
+        data_source1 = SimpleDataSource(data=datosChart1)
+        data_source2 = SimpleDataSource(data=datosChart2)
+        data_source3 = SimpleDataSource(data=datosChart3)
+        # Chart object
+        chart1 = ColumnChart(data_source1,options={'title':'Consumo total por año'})
+        chart2 = PieChart(data_source2,options={'title':'Consumo total por activo'})
+        chart3 = PieChart(data_source3,options={'title':'Consumo total por tipo'})
+        return render(request, 'empresa_visualizacion.html', {'empresa': empresa, 'titulo': 'Graficos','chart1':chart1,'chart2':chart2, 'chart3':chart3})
+
+def convertir(tipo, consumo):
+    emision = dict()
+    emision = {
+            'ELECTRICIDAD': 0.5,
+            'AGUA': 0.0,
+            'GASOLINA': 1.5,
+            'DIESEL': 3.0,
+            'GAS': 2.0,       
+    }
+    co2 = emision[tipo]*float(consumo)
+    return co2

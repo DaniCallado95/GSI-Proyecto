@@ -12,22 +12,23 @@
 </div>
 
 {% if user.is_authenticated %}
-{% if user|empresa:empresa.pk %}
-{% if user|has_group:"administrador" %}
 <ul class="nav nav-pills nav-stacked">
   <li><a href="./visualizacion">Visualización</a></li>
+{% if user|empresa:empresa.pk %}
+{% if user|has_group:"administrador" %}
   <li><a href="./activos">Activos</a></li>
   <li><a href="./consumos">Consumos</a></li>
   <li><a href="./usuarios">Usuarios</a></li>
+{% else %}
+  <li><a href="./activos">Activos</a></li>
+  <li><a href="./consumos">Consumos</a></li>
+{% endif %}
+{% endif %}
 </ul>
 {% else %}
 <ul class="nav nav-pills nav-stacked">
   <li><a href="./visualizacion">Visualización</a></li>
-  <li><a href="./activos">Activos</a></li>
-  <li><a href="./consumos">Consumos</a></li>
 </ul>
-{% endif %}
-{% endif %}
 {% endif %}
 
 {% endblock %}

@@ -11,14 +11,10 @@
   </div>
 </div>
 
-{% if user.is_authenticated %}
-{% if user|empresa:empresa.pk %}
 
 <div id="chart-1">{{ chart1.as_html |safe }}</div>
 <div id="chart-1">{{ chart2.as_html |safe }}</div>
-
-{% endif %}
-{% endif %}
+<div id="chart-1">{{ chart3.as_html |safe }}</div>
 
 
 {% endblock %}

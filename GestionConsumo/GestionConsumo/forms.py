@@ -27,14 +27,19 @@ class ConsumoForm(forms.Form):
         super(ConsumoForm,self).__init__(*args,**kwargs)
         self.fields['activos'] = forms.ChoiceField(choices=tuple([(activos[x].id_activo, activos[x]) for x in range(len(activos))]))
 
-    tipos = [('1', 'ELECTRICIDAD'), ('2', 'AGUA'),('2', 'GASOLINA'),('2', 'DIESEL'),('2', 'GAS')]
+    tipos = (
+            ('ELECTRICIDAD', 'electricidad'),
+            ('AGUA', 'agua'),
+            ('GASOLINA', 'gasolina'),
+            ('DIESEL', 'diesel'),
+            ('GAS', 'gas'),       
+    )
 
     año = forms.IntegerField(label='Año de consumo', widget=forms.NumberInput(attrs={'class':'form-control','placeholder':'Año de consumo'}))
     tipo = forms.ChoiceField(choices=tipos)
     
-    consumo = forms.CharField(label='Consumo', widget=forms.TextInput(attrs={'class':'form-control','placeholder':'Introduzca aqui el consumo'}))
-    co2_emitido = forms.CharField(label='CO2_emitido', widget=forms.TextInput(attrs={'class':'form-control','placeholder':'Introduzca aqui el co2_emitido'}))
+    consumo = forms.CharField(label='Consumo', widget=forms.TextInput(attrs={'class':'form-control','placeholder':'Introduzca aqui el consumo (litros, kW, kg...)'}))
     
     class Meta:
         model = Consumo
-        fields = ('año','tipo','consumo','co2_emitido','activos')
+        fields = ('activos', 'año','tipo','consumo','co2_emitido')
