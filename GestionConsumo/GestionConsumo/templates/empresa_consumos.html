@@ -15,7 +15,8 @@
 {% if user|empresa:empresa.pk %}
 
 <p><strong>Año:</strong>
-  <select class="form-control w-25" id="anoCambiar">
+  <select class="form-control" id="anoCambiar">
+    <option id="opcionEliminar" value="">Seleccione un año para ver los consumos</option>
     {% for a in anos %}
     <option value="{{ a }}">{{ a }}</option>
     {% endfor %}
@@ -38,6 +39,7 @@
   $(document).ready(function () {
 
     $('#anoCambiar').change(function (e) {
+      $('#opcionEliminar').remove();
       var url = "./cargarAno?ano=" + $('#anoCambiar option:selected').val();
       //alert(url)
       $.ajax({

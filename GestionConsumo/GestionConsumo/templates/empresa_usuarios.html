@@ -30,14 +30,28 @@
 </div>
 <hr class="h-100">
 {% endfor %}
-<div class="row text-center">
+<div class="row">
+  <h2 class="text-center">Añadir usuario</h2>
+  <br>
   <form action="./addUser" method="post" id="form_add_user">{% csrf_token %}
-    <div class="col-md-4 form-group">
-      <input type="text" name="username" class="form-control" placeholder="Introduce aqui el usuario" required>
-      <input type="password" name="pass" class="form-control" id="id_contrasena" placeholder="Introduce aqui la contraseña" required>
-      <input type="password" name="pass2" class="form-control" id="id_contrasena2" placeholder="Repite aqui la contraseña" required>
+    <div class="col-md-4">
+      <div class="form-group">
+        <label for="username">Nombre de usuario:</label>
+        <input type="text" name="username" class="form-control" placeholder="Introduce aqui el usuario" required>
+      </div>
     </div>
-    <div class="col-md-4"></div>
+    <div class="col-md-4">
+      <div class="form-group">
+        <label for="pass">Contraseña:</label>
+        <input type="password" name="pass" class="form-control" id="id_contrasena"
+          placeholder="Introduce aqui la contraseña" required>
+      </div>
+      <div class="form-group">
+        <label for="pass2">Repetir contraseña:</label>
+        <input type="password" name="pass2" class="form-control" id="id_contrasena2"
+          placeholder="Repite aqui la contraseña" required>
+      </div>
+    </div>
     <div class="col-md-4 form-group">
       <input type="hidden" name="id_empresa" value="{{ empresa_pk }}">
       <input type="submit" value="Añadir" class="btn btn-success btn-block">
@@ -48,22 +62,22 @@
 {% endif %}
 {% endif %}
 <script>
-  $("#form_add_user").submit(function(e){
-        console.log($("#id_contrasena").val() + " | " + $("#id_contrasena2").val());
-        var str1 = $("#id_contrasena").val();
-        var str2 = $("#id_contrasena2").val();
-        if(str1.localeCompare(str2)){
-            e.preventDefault();
-            alert("Las contraseñas no coinciden");
-        }
-    });
-    $(".forms_delete_user").submit(function(e){
+  $("#form_add_user").submit(function (e) {
+    console.log($("#id_contrasena").val() + " | " + $("#id_contrasena2").val());
+    var str1 = $("#id_contrasena").val();
+    var str2 = $("#id_contrasena2").val();
+    if (str1.localeCompare(str2)) {
+      e.preventDefault();
+      alert("Las contraseñas no coinciden");
+    }
+  });
+  $(".forms_delete_user").submit(function (e) {
 
-      var respuesta = confirm("¿Seguro que desa borrar este usuario?");
+    var respuesta = confirm("¿Seguro que desa borrar este usuario?");
 
-      if (!respuesta){
-        e.preventDefault();
-      }
-    });
+    if (!respuesta) {
+      e.preventDefault();
+    }
+  });
 </script>
 {% endblock %}
